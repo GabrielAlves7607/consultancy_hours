@@ -2,17 +2,30 @@ package main
 
 import (
 	"fmt"
-	"net/http" //
+	"net/http"
+	//"github.com/labstack/echo/v4" 	--> echo
 )
+
+func consultHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hello World Consult")
+}
+
+func ScheduleHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hello World Schedule")
+}
 
 func main() {
 
-	// http.HandleFunc --> used to define the route
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello World \n")
+	http.HandleFunc("/horarios/disponiveis", consultHandler)
+	http.HandleFunc("/agendar", ScheduleHandler)
 
-	})
 	fmt.Println("Initing on port 8080")
-	http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(":8080", nil)
+	if err != nil {
+		fmt.Println("Error strating server ", err)
+	}
 
 }
+
+// curl http://localhost:8080/horarios/disponiveis 	--> consultHandler
+// curl http://localhost:8080/agendar				--> schedule
