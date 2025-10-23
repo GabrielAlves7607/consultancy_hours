@@ -18,3 +18,7 @@ func main() {
 	}
 
 }
+
+//curl -X POST http://localhost:8080/agendar \
+//     -H "Content-Type: application/json" \
+//     -d '{"id_horario": "123456", "nome_cliente": "Joao Gabriel"}'
