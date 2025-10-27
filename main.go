@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"consultancy_hours/controllers"
+	"consultancy_hours/services"
 
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -16,31 +17,32 @@ import (
 
 func main() {
 	if err := godotenv.Load(); err != nil {
-		log.Println("Arquivo .env não encontrado, usando variáveis de ambiente")
+		log.Println(".env file not found, using environment variables")
 	}
 
 	mongoURI := os.Getenv("MONGO_URI")
 	if mongoURI == "" {
-		log.Fatal("MONGO_URI não definida no .env")
+		log.Fatal("MONGO_URI not defined in .env")
 	}
 
 	clientOptions := options.Client().ApplyURI(mongoURI)
 	client, err := mongo.Connect(context.TODO(), clientOptions)
 
 	if err != nil {
-		log.Fatal("Erro ao conectar ao MongoDB: ", err)
+		log.Fatal("Erro to the connect MongoDB: ", err)
 	}
 
 	err = client.Ping(context.TODO(), nil)
 	if err != nil {
-		log.Fatal("Erro ao pingar o MongoDB: ", err)
+		log.Fatal("Erro to the ping MongoDB: ", err)
 	}
 
-	fmt.Println("Conectado ao MongoDB!")
+	fmt.Println("Connect to the MongoDB!")
 
 	db := client.Database("agenda")
 
-	appController := controllers.NewController(db)
+	scheduleService := services.NewScheduleService(db)
+	appController := controllers.NewScheduleController(scheduleService)
 
 	http.HandleFunc("/horarios/disponiveis", appController.ConsultHandler)
 	http.HandleFunc("/agendar", appController.ScheduleHandler)
@@ -52,6 +54,8 @@ func main() {
 	}
 }
 
-//curl -X POST http://localhost:8080/agendar \
-//     -H "Content-Type: application/json" \
-//     -d '{"id_horario": "123456", "nome_cliente": "Joao Gabriel"}'
+//curl -X POST http://localhost:8080/agendar -H "Content-Type: application/json" -d '{"id_horario": "12:00", "nome_cliente": "Joao Gabriel"}'
+//curl -X POST http://localhost:8080/agendar -H "Content-Type: application/json" -d '{"id_horario": "13:00", "nome_cliente": "Pedro Ivo"}'
+//curl -X POST http://localhost:8080/agendar -H "Content-Type: application/json" -d '{"id_horario": "14:00", "nome_cliente": "Lais"}'
+
+//curl http://localhost:8080/horarios/disponiveis | jq .         ---> "sudo apt install jq"
