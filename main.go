@@ -50,7 +50,7 @@ func main() {
 	fmt.Println("Iniciando servidor na porta 8080...")
 	err = http.ListenAndServe(":8080", nil)
 	if err != nil {
-		log.Fatal("Erro ao iniciar servidor: ", err)
+		log.Fatal("Error to the start server: ", err)
 	}
 }
 

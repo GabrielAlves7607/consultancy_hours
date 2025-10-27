@@ -11,6 +11,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+type ScheduleService struct {
+	collection *mongo.Collection
+}
+
 var allDailySlots []string
 
 func init() {
@@ -18,10 +22,6 @@ func init() {
 	for i := 0; i < 24; i++ {
 		allDailySlots[i] = fmt.Sprintf("%02d:00", i)
 	}
-}
-
-type ScheduleService struct {
-	collection *mongo.Collection
 }
 
 func NewScheduleService(db *mongo.Database) *ScheduleService {

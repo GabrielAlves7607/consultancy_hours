@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"consultancy_hours/constants"
 )
 
 type ScheduleController struct {
@@ -53,15 +55,15 @@ func (c *ScheduleController) ScheduleHandler(w http.ResponseWriter, r *http.Requ
 	res, err := c.service.CreateSchedule(order)
 	if err != nil {
 		errMsg := err.Error()
-		if errMsg == "horario indisponivel" {
-			// 409 Conflict is the ideal status for "resource already exists"
-			jsonError(w, "This time is already booked", http.StatusConflict)
-		} else if errMsg == "id_horario invalid" {
-			// 400 Bad Request para entrada inválida
-			jsonError(w, "The id_horario sent is not a valid slot", http.StatusBadRequest)
+
+		if errMsg == constants.ErrorScheduleUnavailable {
+			jsonError(w, constants.msgErrorScheduleUnavailable, http.StatusConflict)
+
+		} else if errMsg == constants.ErrorTimeId {
+			jsonError(w, constants.msgErrorTimeId, http.StatusBadRequest)
+
 		} else {
-			// Generic server error
-			jsonError(w, "Failed to schedule in database", http.StatusInternalServerError)
+			jsonError(w, constants.msgErrorDataBase, http.StatusInternalServerError)
 		}
 		return
 	}
@@ -71,7 +73,7 @@ func (c *ScheduleController) ScheduleHandler(w http.ResponseWriter, r *http.Requ
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated) // 201 Created
 	json.NewEncoder(w).Encode(map[string]interface{}{
-		"mensagem":    "Shedule completed successfully!",
+		"message":     "Shedule completed successfully!",
 		"id_inserido": res.InsertedID,
 	})
 }
