@@ -23,10 +23,9 @@ func jsonError(w http.ResponseWriter, message string, statusCode int) {
 }
 
 func (c *ScheduleController) ConsultHandler(w http.ResponseWriter, r *http.Request) {
-	// Chama o novo método do serviço que retorna apenas slots livres
 	availableSlots, err := c.service.GetAvailableSchedules()
 	if err != nil {
-		jsonError(w, "Falha ao consultar o banco de dados", http.StatusInternalServerError)
+		jsonError(w, "Failed to query database", http.StatusInternalServerError)
 		return
 	}
 
@@ -36,16 +35,16 @@ func (c *ScheduleController) ConsultHandler(w http.ResponseWriter, r *http.Reque
 }
 
 func (c *ScheduleController) ScheduleHandler(w http.ResponseWriter, r *http.Request) {
-	var order models.Schedule // Usa a struct do banco
+	var order models.Schedule
 	err := json.NewDecoder(r.Body).Decode(&order)
 
 	if err != nil {
-		jsonError(w, "JSON invalido", http.StatusBadRequest)
+		jsonError(w, "JSON invalid", http.StatusBadRequest)
 		return
 	}
 
 	if order.IDTime == "" || order.CustomerName == "" {
-		jsonError(w, "id_horario e nome_cliente sao obrigatorios", http.StatusBadRequest)
+		jsonError(w, "id_horario and nome_cliente are mandatory", http.StatusBadRequest)
 		return
 	}
 
@@ -55,14 +54,14 @@ func (c *ScheduleController) ScheduleHandler(w http.ResponseWriter, r *http.Requ
 	if err != nil {
 		errMsg := err.Error()
 		if errMsg == "horario indisponivel" {
-			// 409 Conflict é o status ideal para "recurso já existe"
-			jsonError(w, "Este horario ja esta reservado", http.StatusConflict)
-		} else if errMsg == "id_horario invalido" {
+			// 409 Conflict is the ideal status for "resource already exists"
+			jsonError(w, "This time is already booked", http.StatusConflict)
+		} else if errMsg == "id_horario invalid" {
 			// 400 Bad Request para entrada inválida
-			jsonError(w, "O id_horario enviado nao e um slot valido (ex: 'slot_05')", http.StatusBadRequest)
+			jsonError(w, "The id_horario sent is not a valid slot", http.StatusBadRequest)
 		} else {
-			// Erro genérico do servidor
-			jsonError(w, "Falha ao agendar no banco de dados", http.StatusInternalServerError)
+			// Generic server error
+			jsonError(w, "Failed to schedule in database", http.StatusInternalServerError)
 		}
 		return
 	}
@@ -72,7 +71,7 @@ func (c *ScheduleController) ScheduleHandler(w http.ResponseWriter, r *http.Requ
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated) // 201 Created
 	json.NewEncoder(w).Encode(map[string]interface{}{
-		"mensagem":    "Agendamento realizado com sucesso!",
+		"mensagem":    "Shedule completed successfully!",
 		"id_inserido": res.InsertedID,
 	})
 }

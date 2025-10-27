@@ -89,14 +89,14 @@ func (s *ScheduleService) CreateSchedule(schedule models.Schedule) (*mongo.Inser
 		}
 	}
 	if !isValidSlot {
-		return nil, errors.New("id_horario invalido")
+		return nil, errors.New("id_horario invalid")
 	}
 
 	var existing models.Schedule
 	err := s.collection.FindOne(ctx, bson.M{"id_horario": schedule.IDTime}).Decode(&existing)
 
 	if err == nil {
-		return nil, errors.New("horario indisponivel")
+		return nil, errors.New("schedule unavailable")
 	}
 	if err != mongo.ErrNoDocuments {
 		return nil, err
