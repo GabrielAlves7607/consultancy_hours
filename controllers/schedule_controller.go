@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"consultancy_hours/constants"
+	"consultancy_hours/constants/constControllers"
 )
 
 type ScheduleController struct {
@@ -56,14 +56,14 @@ func (c *ScheduleController) ScheduleHandler(w http.ResponseWriter, r *http.Requ
 	if err != nil {
 		errMsg := err.Error()
 
-		if errMsg == constants.ErrorScheduleUnavailable {
-			jsonError(w, constants.msgErrorScheduleUnavailable, http.StatusConflict)
+		if errMsg == constControllers.ErrorScheduleUnavailable {
+			jsonError(w, constControllers.MsgErrorScheduleUnavailable, http.StatusConflict)
 
-		} else if errMsg == constants.ErrorTimeId {
-			jsonError(w, constants.msgErrorTimeId, http.StatusBadRequest)
+		} else if errMsg == constControllers.ErrorTimeId {
+			jsonError(w, constControllers.MsgErrorTimeId, http.StatusBadRequest)
 
 		} else {
-			jsonError(w, constants.msgErrorDataBase, http.StatusInternalServerError)
+			jsonError(w, constControllers.MsgErrorDatabase, http.StatusInternalServerError)
 		}
 		return
 	}

@@ -44,8 +44,8 @@ func main() {
 	scheduleService := services.NewScheduleService(db)
 	appController := controllers.NewScheduleController(scheduleService)
 
-	http.HandleFunc("/horarios/disponiveis", appController.ConsultHandler)
-	http.HandleFunc("/agendar", appController.ScheduleHandler)
+	http.HandleFunc("/hours/available", appController.ConsultHandler)
+	http.HandleFunc("/to schedule", appController.ScheduleHandler)
 
 	fmt.Println("Iniciando servidor na porta 8080...")
 	err = http.ListenAndServe(":8080", nil)
@@ -54,8 +54,8 @@ func main() {
 	}
 }
 
-//curl -X POST http://localhost:8080/agendar -H "Content-Type: application/json" -d '{"id_horario": "12:00", "nome_cliente": "Joao Gabriel"}'
-//curl -X POST http://localhost:8080/agendar -H "Content-Type: application/json" -d '{"id_horario": "13:00", "nome_cliente": "Pedro Ivo"}'
-//curl -X POST http://localhost:8080/agendar -H "Content-Type: application/json" -d '{"id_horario": "14:00", "nome_cliente": "Lais"}'
+//curl -X POST http://localhost:8080/toSchedule -H "Content-Type: application/json" -d '{"id_horario": "12:00", "nome_cliente": "Joao Gabriel"}'
+//curl -X POST http://localhost:8080/toSchedule -H "Content-Type: application/json" -d '{"id_horario": "13:00", "nome_cliente": "Pedro Ivo"}'
+//curl -X POST http://localhost:8080/toSchedule -H "Content-Type: application/json" -d '{"id_horario": "14:00", "nome_cliente": "Lais"}'
 
-//curl http://localhost:8080/horarios/disponiveis | jq .         ---> "sudo apt install jq"
+//curl http://localhost:8080/hours/available | jq .         ---> "sudo apt install jq"
