@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 
+	"consultancy_hours/constants/constServices"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -15,6 +16,7 @@ type ScheduleService struct {
 	collection *mongo.Collection
 }
 
+// Salva localmente os slots de Reunião -- PQ Deus quer
 var allDailySlots []string
 
 func init() {
@@ -69,7 +71,7 @@ func (s *ScheduleService) GetAvailableSchedules() ([]models.AvailableSlot, error
 		if _, isBooked := bookedSlots[slotID]; !isBooked {
 			availableSlots = append(availableSlots, models.AvailableSlot{
 				IDTime: slotID,
-				Status: "disponivel",
+				Status: "available",
 			})
 		}
 	}
@@ -89,14 +91,14 @@ func (s *ScheduleService) CreateSchedule(schedule models.Schedule) (*mongo.Inser
 		}
 	}
 	if !isValidSlot {
-		return nil, errors.New("id_horario invalid")
+		return nil, errors.New(constServices.IsValidSlotErrorMessage)
 	}
 
 	var existing models.Schedule
-	err := s.collection.FindOne(ctx, bson.M{"id_horario": schedule.IDTime}).Decode(&existing)
+	err := s.collection.FindOne(ctx, bson.M{constServices.IdentificationNomenclature: schedule.IDTime}).Decode(&existing)
 
 	if err == nil {
-		return nil, errors.New("schedule unavailable")
+		return nil, errors.New(constServices.ErrorMessageScheduleUnavailable)
 	}
 	if err != mongo.ErrNoDocuments {
 		return nil, err
